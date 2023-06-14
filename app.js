@@ -11,7 +11,7 @@ const authMiddleware = require('./middlewares/auth');
 const app = express();
 // eslint-disable-next-line import/no-extraneous-dependencies
 const routerUsers = require('./routes/routesUsers');
-const routerCards = require('./routes/routesCards');
+const routerCards = require('./routes/routesMovies');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
 const { handleErrors } = require('./middlewares/handleErrors');
 const NotFoundError = require('./errors/notFoundError');
@@ -20,7 +20,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
 
-mongoose.connect('mongodb://127.0.0.1/mestodb ', {
+mongoose.connect('mongodb://127.0.0.1/bitfilmsdb ', {
   useNewUrlParser: true,
 });
 app.use(requestLogger);
