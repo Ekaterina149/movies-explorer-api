@@ -1,0 +1,31 @@
+{
+  "name": "movies-explorer-api",
+  "version": "1.0.0",
+  "description": "Backend for diploma project",
+  "main": "app.js",
+  "scripts": {
+    "dev": "nodemon app.js",
+    "start": "node app.js",
+    "lint": "npx eslint ."
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Ekaterina149/movies-explorer-api.git"
+  },
+  "keywords": [
+    "Backend",
+    "movie-explorer",
+    "diploma"
+  ],
+  "author": "Ekaterina Yurkova",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Ekaterina149/movies-explorer-api/issues"
+  },
+  "homepage": "https://github.com/Ekaterina149/movies-explorer-api#readme",
+  "devDependencies": {
+    "eslint": "^8.42.0",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-plugin-import": "^2.27.5"
+  }
+}
