@@ -14,19 +14,36 @@ module.exports.getMovies = (req, res, next) => {
     .catch((err) => next(err));
 };
 module.exports.createMovie = (req, res, next) => {
-  const { name, link } = req.body;
-  Movie.create({ name, link, owner: req.user._id })
+  const {
+    country, director, year,
+    description, duration, image, trailerLink, thumbnail, movieId, nameRU, nameEN,
+  } = req.body;
+  Movie.create({
+    country,
+    director,
+    year,
+    duration,
+    description,
+    image,
+    trailerLink,
+    thumbnail,
+    movieId,
+    nameRU,
+    nameEN,
+    owner: req.user._id,
+  })
     .then((movie) => res.status(HTTP_STATUS_CREATED).send(movie))
     .catch((err) => {
+      console.log(err.name);
       if (err.name === 'ValidationError') {
         // eslint-disable-next-line no-shadow
         const {
           country, director, year,
-          description, image, trailerLink, thumbnail, owner, movieId, nameRU, nameEN,
+          description, duration, image, trailerLink, thumbnail, owner, movieId, nameRU, nameEN,
         } = err.errors;
         const errArray = [
           country, director, year,
-          description, image, trailerLink, thumbnail, owner, movieId, nameRU, nameEN];
+          description, duration, image, trailerLink, thumbnail, owner, movieId, nameRU, nameEN];
         const messages = (errArray.filter((element) => element).map((element, index) => (`№${index + 1}. ${element.message}`))).join(', ');
         return next(new BadRequestError(messages.length ? messages : 'Переданы некорректные данные при создании фильма'));
       }
@@ -34,9 +51,15 @@ module.exports.createMovie = (req, res, next) => {
     });
 };
 module.exports.deleteMovie = (req, res, next) => {
-  Movie.findById(req.params.movieId)
+  console.log(req.params.movieId);
+  console.log(String(req.user._id));
+
+
+  Movie.findOne({ movieId: req.params.movieId })
     .orFail()
     .then((movie) => {
+      console.log('a', String(movie.owner));
+
       if (String(movie.owner) !== String(req.user._id)) {
         throw new ForbiddenError('Недостаточно прав для удаления');
       }

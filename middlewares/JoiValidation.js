@@ -3,43 +3,39 @@ const { linkPattern } = require('../utils/constants');
 
 const createUserJoi = celebrate({
   body: Joi.object().keys({
+    name: Joi.string().required().trim(),
     email: Joi.string().required().email(),
     password: Joi.string().required(),
-    name: Joi.string().min(2).max(30),
-    about: Joi.string().min(2).max(30),
-    avatar: Joi.string().pattern(linkPattern),
+
   }),
 });
 
 const updateUserJoi = celebrate({
   body: Joi.object().keys({
-    name: Joi.string().min(2).max(30),
-    about: Joi.string().min(2).max(30),
+    name: Joi.string(),
+    email: Joi.string().email(),
   }),
 });
 
-const updateAvatarJoi = celebrate({
+const createMovieJoi = celebrate({
   body: Joi.object().keys({
-    avatar: Joi.string().required().pattern(linkPattern),
+    country: Joi.string().required().trim(),
+    director: Joi.string().required().trim(),
+    duration: Joi.number().integer().min(0).required(),
+    year: Joi.string().required().trim(),
+    description: Joi.string().required(),
+    image: Joi.string().required().pattern(linkPattern),
+    trailerLink: Joi.string().required().pattern(linkPattern),
+    thumbnail: Joi.string().required().pattern(linkPattern),
+    movieId: Joi.number().required(),
+    nameRU: Joi.string().required().trim(),
+    nameEN: Joi.string().required().trim(),
   }),
 });
 
-const createCardJoi = celebrate({
-  body: Joi.object().keys({
-    name: Joi.string().min(2).max(30).required(),
-    link: Joi.string().required().pattern(linkPattern),
-  }),
-});
-
-const checkCardIdJoi = celebrate({
+const checkMovieIdJoi = celebrate({
   params: Joi.object().keys({
-    cardId: Joi.string().required().hex().length(24),
-  }),
-});
-
-const getUserByIdJoi = celebrate({
-  params: Joi.object().keys({
-    userId: Joi.string().required().hex().length(24),
+    movieId: Joi.number().required(),
   }),
 });
 
@@ -54,10 +50,8 @@ const loginUserJoi = celebrate({
 module.exports = {
 
   createUserJoi,
-  updateAvatarJoi,
-  getUserByIdJoi,
-  createCardJoi,
-  checkCardIdJoi,
+  createMovieJoi,
+  checkMovieIdJoi,
   loginUserJoi,
   updateUserJoi,
 

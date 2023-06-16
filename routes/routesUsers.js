@@ -8,10 +8,10 @@ const {
 } = require('../controllers/users');
 
 // eslint-disable-next-line max-len
-// const { getUserByIdJoi, updateAvatarJoi, updateUserJoi } = require('../middlewares/JoiValidation');
+const { updateUserJoi } = require('../middlewares/JoiValidation');
 
 routerUsers.get('', getUsers);
 routerUsers.get('/me', getCurrentUser);
-routerUsers.patch('/me', updateUser);
+routerUsers.patch('/me', updateUserJoi, updateUser);
 
 module.exports = routerUsers;

@@ -9,7 +9,7 @@ const movieSchema = new mongoose.Schema(
       validate: {
         validator(v) {
           if ((v === '') || ((v.match(/\s/g) !== null) && (v.match(/\s/g).length === v.length))
-          ) return false;
+          ) {return false;}
 
           return validator.isAlpha(v, 'ru-RU');
         },
@@ -25,7 +25,7 @@ const movieSchema = new mongoose.Schema(
           if ((v === '') || ((v.match(/\s/g) !== null) && (v.match(/\s/g).length === v.length))
           ) return false;
 
-          return validator.isAlpha(v, 'ru-RU');
+          return validator.isAlpha(v, 'ru-RU', { ignore: ' ' });
         },
         message: 'Введите имя режиссера на русском языке, цифры недопустимы',
       },
@@ -111,7 +111,7 @@ const movieSchema = new mongoose.Schema(
           if ((v === '') || ((v.match(/\s/g) !== null) && (v.match(/\s/g).length === v.length))
           ) return false;
 
-          return validator.isAlphanumeric(v, 'ru-RU');
+          return validator.isAlphanumeric(v, 'ru-RU', { ignore: ' -,&!"":%#№@'  });
         },
         message: 'Введите название фильма на русском языке',
       },
@@ -124,7 +124,7 @@ const movieSchema = new mongoose.Schema(
           if ((v === '') || ((v.match(/\s/g) !== null) && (v.match(/\s/g).length === v.length))
           ) return false;
 
-          return validator.isAlphanumeric(v, 'en-US');
+          return validator.isAlphanumeric(v, 'en-US', { ignore: "/[%#№@&?,:'\s]/" });
         },
         message: 'Введите название фильма на английском языке',
       },

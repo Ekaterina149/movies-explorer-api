@@ -1,3 +1,4 @@
+require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
 const { errors } = require('celebrate');
@@ -11,7 +12,7 @@ const authMiddleware = require('./middlewares/auth');
 const app = express();
 // eslint-disable-next-line import/no-extraneous-dependencies
 const routerUsers = require('./routes/routesUsers');
-const routerCards = require('./routes/routesMovies');
+const routerMovies = require('./routes/routesMovies');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
 const { handleErrors } = require('./middlewares/handleErrors');
 const NotFoundError = require('./errors/notFoundError');
@@ -33,7 +34,7 @@ app.get('/signout', (req, res) => {
 });
 
 app.use('/users', routerUsers);
-app.use('/cards', routerCards);
+app.use('/movies', routerMovies);
 
 // eslint-disable-next-line no-unused-vars
 app.use((req, res) => {

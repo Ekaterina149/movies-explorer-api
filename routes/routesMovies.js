@@ -7,10 +7,10 @@ const {
 
 } = require('../controllers/movies');
 
-// const { createCardJoi, checkCardIdJoi } = require('../middlewares/JoiValidation');
+const { createMovieJoi, checkMovieIdJoi } = require('../middlewares/JoiValidation');
 
+routerMovies.post('', createMovieJoi, createMovie);
 routerMovies.get('', getMovies);
-routerMovies.post('', createMovie);
-routerMovies.delete('/:movieId', deleteMovie);
+routerMovies.delete('/:movieId', checkMovieIdJoi, deleteMovie);
 
 module.exports = routerMovies;
