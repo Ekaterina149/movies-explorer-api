@@ -38,6 +38,7 @@
     "dotenv": "^16.1.4",
     "express": "^4.18.2",
     "express-winston": "^4.2.0",
+    "helmet": "^7.0.0",
     "jsonwebtoken": "^9.0.0",
     "mongoose": "^7.2.4",
     "validator": "^13.9.0",

@@ -1,3 +1,4 @@
+/* eslint-disable no-useless-escape */
 /* eslint-disable linebreak-style */
 const mongoose = require('mongoose');
 const validator = require('validator');
@@ -9,7 +10,7 @@ const movieSchema = new mongoose.Schema(
       validate: {
         validator(v) {
           if ((v === '') || ((v.match(/\s/g) !== null) && (v.match(/\s/g).length === v.length))
-          ) {return false;}
+          ) { return false; }
 
           return validator.isAlpha(v, 'ru-RU');
         },
@@ -111,7 +112,7 @@ const movieSchema = new mongoose.Schema(
           if ((v === '') || ((v.match(/\s/g) !== null) && (v.match(/\s/g).length === v.length))
           ) return false;
 
-          return validator.isAlphanumeric(v, 'ru-RU', { ignore: ' -,&!"":%#№@'  });
+          return validator.isAlphanumeric(v, 'ru-RU', { ignore: ' -,&!"":%#№@' });
         },
         message: 'Введите название фильма на русском языке',
       },

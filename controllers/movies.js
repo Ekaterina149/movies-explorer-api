@@ -34,11 +34,12 @@ module.exports.createMovie = (req, res, next) => {
   })
     .then((movie) => res.status(HTTP_STATUS_CREATED).send(movie))
     .catch((err) => {
-      console.log(err.name);
       if (err.name === 'ValidationError') {
         // eslint-disable-next-line no-shadow
         const {
+          // eslint-disable-next-line no-shadow
           country, director, year,
+          // eslint-disable-next-line no-shadow
           description, duration, image, trailerLink, thumbnail, owner, movieId, nameRU, nameEN,
         } = err.errors;
         const errArray = [
@@ -51,15 +52,9 @@ module.exports.createMovie = (req, res, next) => {
     });
 };
 module.exports.deleteMovie = (req, res, next) => {
-  console.log(req.params.movieId);
-  console.log(String(req.user._id));
-
-
   Movie.findOne({ movieId: req.params.movieId })
     .orFail()
     .then((movie) => {
-      console.log('a', String(movie.owner));
-
       if (String(movie.owner) !== String(req.user._id)) {
         throw new ForbiddenError('Недостаточно прав для удаления');
       }
