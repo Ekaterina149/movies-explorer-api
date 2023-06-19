@@ -24,7 +24,7 @@ mongoose.connect(MONGO_URL, {
 app.use(requestLogger);
 app.use(helmet());
 
-app.use(cors({ origin: ['http://localhost:3001'], credentials: true }));
+app.use(cors({ origin: ['http://localhost:3001', 'http://localhost:3000'], credentials: true }));
 // корневой роут
 app.use(router);
 app.use(errorLogger);

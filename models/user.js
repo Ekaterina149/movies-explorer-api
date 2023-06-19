@@ -26,8 +26,8 @@ const userSchema = new mongoose.Schema(
       type: String,
       select: false,
       required: [true, 'Поле "password" не может быть пустым'],
+    },
   },
-},
   {
     versionKey: false,
   },

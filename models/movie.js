@@ -1,5 +1,3 @@
-/* eslint-disable no-useless-escape */
-/* eslint-disable linebreak-style */
 const mongoose = require('mongoose');
 const validator = require('validator');
 
@@ -7,7 +5,7 @@ const movieSchema = new mongoose.Schema(
   {
     country: {
       type: String,
-       required: [true, 'поле "country" не может быть пустым']
+      required: [true, 'поле "country" не может быть пустым'],
 
     },
     director: {
@@ -88,13 +86,12 @@ const movieSchema = new mongoose.Schema(
       required: [true, 'поле "nameEN" не может быть пустым'],
     },
 
-   },
+  },
   {
     versionKey: false,
   },
 );
 // задаем составной индекс, для блокировки повторного сохранения фильма пользователем
 movieSchema.index({ owner: 1, movieId: 1 }, { unique: true });
-
 
 module.exports = mongoose.model('movie', movieSchema);

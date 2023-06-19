@@ -7,7 +7,6 @@ const {
   getCurrentUser,
 } = require('../controllers/users');
 
-// eslint-disable-next-line max-len
 const { updateUserJoi } = require('../middlewares/JoiValidation');
 
 routerUsers.get('', getUsers);

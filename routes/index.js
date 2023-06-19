@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 const router = require('express').Router();
 const routerUsers = require('./routesUsers');
 const routerMovies = require('./routesMovies');
@@ -15,7 +14,7 @@ router.get('/signout', (req, res) => {
 });
 router.use('/users', routerUsers);
 router.use('/movies', routerMovies);
-router.use((req, res) => {
+router.use(() => {
   throw new NotFoundError("Sorry can't find that!");
 });
 module.exports = router;
