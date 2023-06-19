@@ -6,14 +6,13 @@ const createUserJoi = celebrate({
     name: Joi.string().required().trim(),
     email: Joi.string().required().email(),
     password: Joi.string().required(),
-
   }),
 });
 
 const updateUserJoi = celebrate({
   body: Joi.object().keys({
-    name: Joi.string(),
-    email: Joi.string().email(),
+    name: Joi.string().required().trim(),
+    email: Joi.string().required().email(),
   }),
 });
 
@@ -35,7 +34,7 @@ const createMovieJoi = celebrate({
 
 const checkMovieIdJoi = celebrate({
   params: Joi.object().keys({
-    movieId: Joi.number().required(),
+    id: Joi.string().required().hex().length(24),
   }),
 });
 
@@ -43,16 +42,13 @@ const loginUserJoi = celebrate({
   body: Joi.object().keys({
     email: Joi.string().required().email(),
     password: Joi.string().required(),
-
   }),
 });
 
 module.exports = {
-
   createUserJoi,
   createMovieJoi,
   checkMovieIdJoi,
   loginUserJoi,
   updateUserJoi,
-
 };

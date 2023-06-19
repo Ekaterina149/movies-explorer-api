@@ -11,6 +11,6 @@ const { createMovieJoi, checkMovieIdJoi } = require('../middlewares/JoiValidatio
 
 routerMovies.post('', createMovieJoi, createMovie);
 routerMovies.get('', getMovies);
-routerMovies.delete('/:movieId', checkMovieIdJoi, deleteMovie);
+routerMovies.delete('/:id', checkMovieIdJoi, deleteMovie);
 
 module.exports = routerMovies;

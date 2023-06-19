@@ -7,50 +7,24 @@ const movieSchema = new mongoose.Schema(
   {
     country: {
       type: String,
-      validate: {
-        validator(v) {
-          if ((v === '') || ((v.match(/\s/g) !== null) && (v.match(/\s/g).length === v.length))
-          ) { return false; }
-
-          return validator.isAlpha(v, 'ru-RU');
-        },
-        message: 'Введите название страны на русском языке, цифры недопустимы',
-      },
-      required: true,
+       required: [true, 'поле "country" не может быть пустым']
 
     },
     director: {
       type: String,
-      validate: {
-        validator(v) {
-          if ((v === '') || ((v.match(/\s/g) !== null) && (v.match(/\s/g).length === v.length))
-          ) return false;
-
-          return validator.isAlpha(v, 'ru-RU', { ignore: ' ' });
-        },
-        message: 'Введите имя режиссера на русском языке, цифры недопустимы',
-      },
-      required: true,
+      required: [true, 'поле "director" не может быть пустым'],
     },
     duration: {
       type: Number,
-      required: true,
+      required: [true, 'поле "duration" не может быть пустым'],
     },
     year: {
       type: String,
-      validate: {
-        validator(v) {
-          const regex = /^\d+$/;
-          return regex.test(v);
-        },
-        message: 'Введите год создания фильма без пробелов, буквы недопустимы',
-
-      },
-      required: true,
+      required: [true, 'поле "year" не может быть пустым'],
     },
     description: {
       type: String,
-      required: true,
+      required: [true, 'поле "description" не может быть пустым'],
     },
 
     image: {
@@ -65,7 +39,7 @@ const movieSchema = new mongoose.Schema(
         },
         message: 'Введите корректную ссылку на постер к фильму',
       },
-      required: true,
+      required: [true, 'поле "image" не может быть пустым'],
     },
 
     trailerLink: {
@@ -80,7 +54,7 @@ const movieSchema = new mongoose.Schema(
         },
         message: 'Введите корректную ссылку на трейлер к фильму',
       },
-      required: true,
+      required: [true, 'поле "trailerLink" не может быть пустым'],
     },
     thumbnail: {
       type: String,
@@ -94,52 +68,33 @@ const movieSchema = new mongoose.Schema(
         },
         message: 'Введите корректную ссылку миниатюрное изображение постера  к фильму',
       },
-      required: true,
+      required: [true, 'поле "thumbnail" не может быть пустым'],
     },
     owner: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'user',
-      required: true,
+      required: [true, 'поле "owner" не может быть пустым'],
     },
     movieId: {
       type: Number,
-      required: true,
+      required: [true, 'поле "movieId" не может быть пустым'],
     },
     nameRU: {
       type: String,
-      validate: {
-        validator(v) {
-          if ((v === '') || ((v.match(/\s/g) !== null) && (v.match(/\s/g).length === v.length))
-          ) return false;
-
-          return validator.isAlphanumeric(v, 'ru-RU', { ignore: ' -,&!"":%#№@' });
-        },
-        message: 'Введите название фильма на русском языке',
-      },
-      required: true,
+      required: [true, 'поле "nameRU" не может быть пустым'],
     },
     nameEN: {
       type: String,
-      validate: {
-        validator(v) {
-          if ((v === '') || ((v.match(/\s/g) !== null) && (v.match(/\s/g).length === v.length))
-          ) return false;
-
-          return validator.isAlphanumeric(v, 'en-US', { ignore: "/[%#№@&?,:'\s]/" });
-        },
-        message: 'Введите название фильма на английском языке',
-      },
-      required: true,
+      required: [true, 'поле "nameEN" не может быть пустым'],
     },
 
-    createdAt: {
-      type: Date,
-      default: Date.now,
-    },
-
-  },
+   },
   {
     versionKey: false,
   },
 );
+// задаем составной индекс, для блокировки повторного сохранения фильма пользователем
+movieSchema.index({ owner: 1, movieId: 1 }, { unique: true });
+
+
 module.exports = mongoose.model('movie', movieSchema);

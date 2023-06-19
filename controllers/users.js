@@ -1,4 +1,3 @@
-/* eslint-disable no-shadow */
 const { NODE_ENV, JWT_SECRET } = process.env;
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
@@ -8,105 +7,96 @@ const NotFoundError = require('../errors/notFoundError');
 const BadRequestError = require('../errors/badRequestError');
 const ConflictError = require('../errors/conflictError');
 
-// const {
-//   HTTP_STATUS_BAD_REQUEST,
-//   HTTP_STATUS_NOT_FOUND,
-//   HTTP_STATUS_INTERNAL_SERVER_ERROR,
-// } = httpConstants;
+function validateCatchAll(err, next, defaultMessage) {
+  if (err.name === 'DocumentNotFoundError') return next(new NotFoundError('Пользователь с указанным _id не найден.'));
+
+  if (err.name === 'CastError') return next(new BadRequestError('Передан некорректный _id пользователя'));
+
+  if (err.name === 'ValidationError') {
+    const errArray = Object.values(err.errors);
+    const messages = errArray
+      .map((element, index) => `№${index + 1}. ${element.message}`)
+      .join(', ');
+    return next(
+      new BadRequestError(messages.length ? messages : defaultMessage),
+    );
+  }
+  if (err.code === 11000) return next(new ConflictError('Такой email уже есть в базе'));
+
+  return next(err);
+}
 
 module.exports.getUsers = (req, res, next) => {
   User.find({})
+    .select()
     .then((users) => res.send(users))
     .catch((err) => next(err));
 };
 
 module.exports.getUser = (req, res, next) => {
   User.findById(req.params.userId)
+    .select()
     .orFail()
     .then((user) => res.send(user))
-    .catch((err) => {
-      if (err.name === 'DocumentNotFoundError') {
-        return next(new NotFoundError('Пользователь с указанным _id не найден.'));
-      }
-      if (err.name === 'CastError') {
-        return next(new BadRequestError('Передан некорректный _id пользователя'));
-      }
-
-      return next(err);
-    });
+    .catch((err) => validateCatchAll(err, next, ''));
 };
 module.exports.createUser = (req, res, next) => {
-  const {
-    name, email, password,
-  } = req.body;
-
-  bcrypt.hash(password, 12)
-    .then((hash) => User.create({
-      name, email, password: hash,
-    }))
-    .then((user) => {
-      const deletePasswordUser = user.toObject({ useProjection: true });
-      return res.send(deletePasswordUser);
+  bcrypt
+    .hash(req.body.password, 12)
+    .then((hash) => {
+      const { name, email } = req.body;
+      return User.create({
+        name,
+        email,
+        password: hash,
+      });
     })
-    .catch((err) => {
-      if (err.name === 'ValidationError') {
-        const {
-          email, name, password,
-        } = err.errors;
-        const errArray = [email, name, password];
-        const messages = (errArray.filter((element) => element).map((element, index) => (`№${index + 1}. ${element.message}`))).join(', ');
-        return next(new BadRequestError(messages.length ? messages : 'Переданы некорректные  данные пользователя'));
-      }
-      if (err.code === 11000) {
-        return next(new ConflictError('Такой email уже есть в базе'));
-      }
-      return next(err);
-    });
+    .then((user) => res.send(user.toObject({ useProjection: true })))
+    .catch((err) => validateCatchAll(err, next, 'Переданы некорректные  данные пользователя'));
 };
 module.exports.updateUser = (req, res, next) => {
   const { name, email } = req.body;
 
-  User.findByIdAndUpdate(req.user._id, { name, email }, { new: true, runValidators: true })
+  User.findByIdAndUpdate(
+    req.user._id,
+    { name, email },
+    { new: true, runValidators: true },
+  )
     .orFail()
     .then((user) => res.send(user))
-    .catch((err) => {
-      if (err.name === 'DocumentNotFoundError') {
-        return next(new NotFoundError('Пользователь с указанным _id не найден.'));
-      }
-      if (err.name === 'ValidationError') {
-        const { name, email } = err.errors;
-        const errArray = [name, email];
-        const messages = (errArray.filter((element) => element).map((element, index) => (`№${index + 1}. ${element.message}`))).join(', ');
-        return next(new BadRequestError(messages.length ? messages : 'Переданы некорректные данные при обновлении профиля'));
-      }
-
-      return next(err);
-    });
+    .catch((err) => validateCatchAll(
+      err,
+      next,
+      'Переданы некорректные данные при обновлении профиля',
+    ));
 };
 
 module.exports.login = (req, res, next) => {
   const { email, password } = req.body;
-  User.findOne({ email }).select('+password')
+  User.findOne({ email })
+    .select('+password')
     .then((user) => {
       if (!user) {
         return next(new AuthError('Неправильные почта или пароль'));
       }
 
-      return bcrypt.compare(password, user.password)
-        .then((matched) => {
-          if (!matched) {
-            return next(new AuthError('Неправильные почта или пароль'));
-          }
-          const token = jwt.sign({ _id: user._id }, NODE_ENV === 'production' ? JWT_SECRET : 'some-secret-key', { expiresIn: '7d' });
+      return bcrypt.compare(password, user.password).then((matched) => {
+        if (!matched) {
+          return next(new AuthError('Неправильные почта или пароль'));
+        }
+        const token = jwt.sign(
+          { _id: user._id },
+          NODE_ENV === 'production' ? JWT_SECRET : 'some-secret-key',
+          { expiresIn: '7d' },
+        );
 
-          res.cookie('jwt', token, {
-
-            maxAge: 7 * 24 * 60 * 60 * 1000, // 7 дней в миллисекундах
-            httpOnly: true,
-          });
-
-          return res.send(user.toJSON());
+        res.cookie('jwt', token, {
+          maxAge: 7 * 24 * 60 * 60 * 1000, // 7 дней в миллисекундах
+          httpOnly: true,
         });
+
+        return res.send(user.toObject({ useProjection: true }));
+      });
     })
     .catch((err) => next(err));
 };
@@ -117,7 +107,9 @@ module.exports.getCurrentUser = (req, res, next) => {
     .then((user) => res.send(user))
     .catch((err) => {
       if (err.name === 'DocumentNotFoundError') {
-        return next(new NotFoundError('Пользователь с указанным _id не найден.'));
+        return next(
+          new NotFoundError('Пользователь с указанным _id не найден.'),
+        );
       }
 
       return next(err);

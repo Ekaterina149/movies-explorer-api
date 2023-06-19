@@ -5,7 +5,9 @@ const userSchema = new mongoose.Schema(
   {
     name: {
       type: String,
-      required: true,
+      required: [true, 'Поле "name" не может быть пустым'],
+      minlength: [2, 'Минимальная длина поля "name" -2'],
+      maxlength: [30, 'Максимальная длина поля "name" -30'],
 
     },
 
@@ -17,15 +19,15 @@ const userSchema = new mongoose.Schema(
         },
         message: 'Введите корректную почту',
       },
-      required: true,
+      required: [true, 'Поле "email" не может быть пустым'],
       unique: true,
     },
     password: {
       type: String,
       select: false,
-      required: true,
-    },
+      required: [true, 'Поле "password" не может быть пустым'],
   },
+},
   {
     versionKey: false,
   },
