@@ -93,6 +93,8 @@ module.exports.login = (req, res, next) => {
         res.cookie('jwt', token, {
           maxAge: 7 * 24 * 60 * 60 * 1000, // 7 дней в миллисекундах
           httpOnly: true,
+          sameSite: 'None',
+          secure: true,
         });
 
         return res.send(user.toObject({ useProjection: true }));
