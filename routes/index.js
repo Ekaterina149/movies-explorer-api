@@ -10,7 +10,13 @@ router.post('/signin', loginUserJoi, login);
 router.post('/signup', createUserJoi, createUser);
 router.use(authMiddleware);
 router.get('/signout', (req, res) => {
-  res.clearCookie('jwt').send({ message: 'Выход' });
+  res
+    .clearCookie('jwt', {
+      httpOnly: true,
+      sameSite: 'None',
+      secure: true,
+    })
+    .send({ message: 'Выход' });
 });
 router.use('/users', routerUsers);
 router.use('/movies', routerMovies);
